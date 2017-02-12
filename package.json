@@ -1,0 +1,33 @@
+{
+  "name": "SegmentDeveloperTools",
+  "productName": "Segment Developer Tools",
+  "version": "1.0.0",
+  "description": "Segment Developer Tools is an application for testing and packaging segments for Future Lab Program N.",
+  "os": [
+    "darwin"
+  ],
+  "engines": {
+    "node": ">=4.5.0"
+  },
+  "main": "main.js",
+  "dependencies": {
+    "electron-prebuilt": "1.0.1"
+  },
+  "devDependencies": {
+    "electron-packager": "^8.1.0",
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0"
+  },
+  "scripts": {
+    "start": "electron ./app/app.asar",
+    "build": "grunt build"
+  },
+  "author": {
+    "name": "Sony"
+  },
+  "private": true,
+  "license": "Sony Confidential",
+  "homepage": "https://developer.sony.com/develop/future-lab-program/n"
+}
