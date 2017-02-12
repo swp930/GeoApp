@@ -28,6 +28,9 @@ var currentLocality;
 var isPositionAnnounced;
 var synthesis = da.SpeechSynthesis.getInstance();
 var speechText;
+var locations = [{locations:36.9914,longitude:122.0609},
+{locations:34.0689,latitude:118.4452},{locations:5,longitude:6},
+{locations:7,longitude:8},{locations:9,longitude:10}];
 
 /**
  * The callback to prepare a segment for play.
@@ -134,7 +137,7 @@ da.segment.onstart = function (trigger, args) {
         speechToText = "where am i";
         if(args == "where am i")
         {
-          synthesis.speak("You are at "+currentAddress, {
+          /*synthesis.speak("You are at "+currentAddress, {
           onstart: function () {
               console.log('[SpeechToText] speak start');
           },
@@ -146,8 +149,22 @@ da.segment.onstart = function (trigger, args) {
               console.log('[SpeechToText] speak cancel: ' + error.message);
               da.stopSegment();
           }
-      });
+      });*/
+          speak("You are at "+currentAddress);
         }
+        else if(args =="date")
+        {
+          speak("February 12");
+        }
+        else if(args =="time")
+        {
+          speak(speakData.currentTime+ "");
+        }
+        else
+        {
+          speak("Goodbye");
+        }
+        
         //speak(da.getString(stringKey, speakData)).then(function () {
             //da.stopSegment();
         //});
