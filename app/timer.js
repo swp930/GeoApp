@@ -26,6 +26,8 @@
 var currentAddress;
 var currentLocality;
 var isPositionAnnounced;
+var synthesis = da.SpeechSynthesis.getInstance();
+var speechText;
 
 /**
  * The callback to prepare a segment for play.
@@ -33,7 +35,9 @@ var isPositionAnnounced;
  * @param  {object} args    The input arguments.
  */
 da.segment.onpreprocess = function (trigger, args) {
-    console.log('onpreprocess', { trigger: trigger, args: args });
+    speechText = "";
+    da.startSegment(null, null);
+    
     //Check the trigger type.
     if (trigger === 'launchRule' || trigger === 'voice') {
       // Fethch the segment configuration options from the server.
@@ -64,6 +68,7 @@ da.segment.onpreprocess = function (trigger, args) {
         currentLocality = args;
         da.startSegment(null, null);
     }
+    
 };
 
 /**
@@ -72,7 +77,37 @@ da.segment.onpreprocess = function (trigger, args) {
  * @param  {object} args    The input arguments.
  */
 da.segment.onstart = function (trigger, args) {
-    console.log('onstart', {trigger: trigger, args: args});
+    if (da.getApiLevel === undefined) {
+        // API_LEVEL = 1;
+        synthesis.speak('This device software is not available for speech to text function.', {
+            onstart: function () {
+                console.log('[SpeechToText] speak start');
+            },
+            onend: function () {
+                da.stopSegment();
+            },
+            onerror: function (error) {
+                da.stopSegment();
+            }
+        });
+    } else {
+        // API_LEVEL = 2 or later;
+        synthesis.speak('Please say something.', {
+            onstart: function () {
+                console.log('[SpeechToText] speak start');
+            },
+            onend: function () {
+                console.log('[SpeechToText] speak onend');
+            },
+            onerror: function (error) {
+                console.log('[SpeechToText] speak cancel: ' + error.message);
+                da.stopSegment();
+            }
+        });
+
+    }
+    
+    //console.log('onstart', {trigger: trigger, args: args});
 
     var currentTime = new Date();
     var storage = new da.Storage();
@@ -106,9 +141,28 @@ da.segment.onstart = function (trigger, args) {
             stringKey = 'startTimer';
         }
         // Speak the text.
-        speak(da.getString(stringKey, speakData)).then(function () {
-            da.stopSegment();
-        });
+        //var speechToText = new da.SpeechToText();
+        //speechToText.startSpeechToText(callbackobject);
+        speechToText = "where am i";
+        if(args == "where am i")
+        {
+          synthesis.speak("You are at "+currentAddress, {
+          onstart: function () {
+              console.log('[SpeechToText] speak start');
+          },
+          onend: function () {
+              console.log('[SpeechToText] speak onend');
+              da.stopSegment();
+          },
+          onerror: function (error) {
+              console.log('[SpeechToText] speak cancel: ' + error.message);
+              da.stopSegment();
+          }
+      });
+        }
+        //speak(da.getString(stringKey, speakData)).then(function () {
+            //da.stopSegment();
+        //});
     } else if (args === 'count') {
         // Get start time from local stroge.
         var startTime = storage.getItem('startTime');
@@ -142,6 +196,7 @@ da.segment.onstart = function (trigger, args) {
     } else {
         da.stopSegment();
     }
+    
 };
 da.segment.onstop = function () {
     console.log('onstop() start');
@@ -150,9 +205,69 @@ da.segment.onpause = function () {
     console.log('onpause() start');
 };
 da.segment.onresume = function () {
+    var synthesis = da.SpeechSynthesis.getInstance();
+    if(speechText == "where am i")
+    {
+      speechText = "Potatoes";
+    }
+    synthesis.speak('The result is ' + speechText, {
+        onstart: function () {
+            console.log('[SpeechToText] speak start');
+        },
+        onend: function () {
+            console.log('[SpeechToText] speak onend');
+            da.stopSegment();
+        },
+        onerror: function (error) {
+            console.log('[SpeechToText] speak cancel: ' + error.message);
+            da.stopSegment();
+        }
+    });
+
+    if (speechText != "") {
+        var entry = {
+            domain: "Input Speech Text",
+            extension: {},
+            title: speechText,
+            url: "https://translate.google.co.jp/?hl=ja#en/ja/" + speechText,
+            imageUrl: "http://www.sony.net/SonyInfo/News/Press/201603/16-025E/img01.gif",
+            date: new Date().toISOString()
+        };
+        da.addTimeline({entries: [entry]});
+    }
     console.log('onresume() start');
 };
 da.segment.oncommand = function (commandObject) {
     console.log('oncommand() start');
     return true;
+};
+
+var callbackobject = {
+    onsuccess: function (results) {
+        console.log('[SpeechToText] : SpeechToText process has finished successfully');
+        console.log('[SpeechToText] : Results = ' + results);
+
+        var strResults = results.join(" ");
+        speechText = strResults;
+    },
+    onerror: function (error) {
+        console.log('[SpeechToText] : SpeechToText error message = ' + error.message)
+        console.log('[SpeechToText] : SpeechToText error code = ' + error.code)
+
+        var synthesis = da.SpeechSynthesis.getInstance();
+        synthesis.speak('The speech to text API could not recognize what you said. Reason is ' + error.message, {
+            onstart: function () {
+                console.log('[SpeechToText] error message speak start');
+            },
+            onend: function () {
+                console.log('[SpeechToText] error message speak onend');
+                da.stopSegment();
+            },
+            onerror: function (error) {
+                console.log('[SpeechToText] error message speak cancel: ' + error.message);
+                da.stopSegment();
+            }
+        });
+    }
+
 };
