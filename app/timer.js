@@ -92,18 +92,6 @@ da.segment.onstart = function (trigger, args) {
         });
     } else {
         // API_LEVEL = 2 or later;
-        synthesis.speak('Please say something.', {
-            onstart: function () {
-                console.log('[SpeechToText] speak start');
-            },
-            onend: function () {
-                console.log('[SpeechToText] speak onend');
-            },
-            onerror: function (error) {
-                console.log('[SpeechToText] speak cancel: ' + error.message);
-                da.stopSegment();
-            }
-        });
 
     }
     
