@@ -31,7 +31,9 @@ var speechText;
 var locations = [{locations:36.9914,longitude:122.0609},
 {locations:34.0689,latitude:118.4452},{locations:33.645,longitude:117.8443},
 {locations:38.5382,longitude:121.7617},{locations:32.8801,longitude:117.2340}];
-var stringLocations = ["44 Tehama Street","900 Franklin Street","1015 Folsom Street","Westfield San Francisco Centre, 865 Market St","135 Powell St"];
+var stringLocations = ["44 Tehama Street ","900 Franklin Street","1015 Folsom Street","Westfield San Francisco Centre, 865 Market St","135 Powell St"];
+var word = "You have been to 44 Tehama Street at 8 30 AM, 900 Franklin Street at 9 15 AM, and 1015 Folsom Street at 12 PM";
+
 /**
  * The callback to prepare a segment for play.
  * @param  {string} trigger The trigger type of a segment.
@@ -134,7 +136,7 @@ da.segment.onstart = function (trigger, args) {
         // Speak the text.
         //var speechToText = new da.SpeechToText();
         //speechToText.startSpeechToText(callbackobject);
-        speechToText = "where am i";
+        //speak("hello, john how can i help you");
         if(args == "where am i")
         {
           /*synthesis.speak("You are at "+currentAddress, {
@@ -152,20 +154,17 @@ da.segment.onstart = function (trigger, args) {
       });*/
           speak("You are at "+currentAddress);
         }
-        else if(args =="date")
+        else if(args =="what is the date")
         {
           speak("February 12");
         }
-        else if(args =="time")
+        else if(args =="what is the time")
         {
           speak(speakData.currentTime+ "");
         }
         else if(args == "where have i been")
         {
-          for(var i = 0;i<5;i++)
-          {
-            speak(""+locations[i]);
-          }
+          speak(word);
         }
         else
         {
