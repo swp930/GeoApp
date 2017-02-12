@@ -29,9 +29,9 @@ var isPositionAnnounced;
 var synthesis = da.SpeechSynthesis.getInstance();
 var speechText;
 var locations = [{locations:36.9914,longitude:122.0609},
-{locations:34.0689,latitude:118.4452},{locations:5,longitude:6},
-{locations:7,longitude:8},{locations:9,longitude:10}];
-
+{locations:34.0689,latitude:118.4452},{locations:33.645,longitude:117.8443},
+{locations:38.5382,longitude:121.7617},{locations:32.8801,longitude:117.2340}];
+var stringLocations = ["44 Tehama Street","900 Franklin Street","1015 Folsom Street","Westfield San Francisco Centre, 865 Market St","135 Powell St"];
 /**
  * The callback to prepare a segment for play.
  * @param  {string} trigger The trigger type of a segment.
@@ -160,10 +160,19 @@ da.segment.onstart = function (trigger, args) {
         {
           speak(speakData.currentTime+ "");
         }
+        else if(args == "where have i been")
+        {
+          for(var i = 0;i<5;i++)
+          {
+            speak(""+locations[i]);
+          }
+        }
         else
         {
           speak("Goodbye");
         }
+        
+        
         
         //speak(da.getString(stringKey, speakData)).then(function () {
             //da.stopSegment();
